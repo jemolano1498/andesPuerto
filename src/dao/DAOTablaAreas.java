@@ -17,28 +17,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import vos.Area;
 import vos.Bodega;
 import vos.Carga;
 import vos.Cobertizo;
+import vos.Exportador;
 import vos.Patio;
 import vos.Silo;
 
-/**
- * Clase DAO que se conecta la base de datos usando JDBC para resolver los requerimientos de la aplicación
- * @author Juan
- */
 public class DAOTablaAreas {
-
 
 	private ArrayList<Object> recursos;
 
 	private Connection conn;
 
-	public DAOTablaAreas() {
+	public DAOTablaAreas() 
+	{
 		recursos = new ArrayList<Object>();
 	}
 
-	public void cerrarRecursos() {
+	public void cerrarRecursos() 
+	{
 		for(Object ob : recursos){
 			if(ob instanceof PreparedStatement)
 				try {
@@ -49,12 +48,13 @@ public class DAOTablaAreas {
 		}
 	}
 
-	public void setConn(Connection con){
+	public void setConn(Connection con)
+	{
 		this.conn = con;
 	}
 
-	public void addCobertizo(Cobertizo cobertizo) throws SQLException, Exception {
-
+	public void addCobertizo(Cobertizo cobertizo) throws SQLException, Exception 
+	{
 		String sql = "INSERT INTO AREA_ALMACENAMIENTO VALUES ('";
 		sql += cobertizo.getId() + "',";
 		sql += "'coberticito'" + ")";
@@ -81,7 +81,8 @@ public class DAOTablaAreas {
 
 	}
 	
-	public void addBodega (Bodega bodega) throws SQLException, Exception {
+	public void addBodega (Bodega bodega) throws SQLException, Exception 
+	{
 
 		String sql = "INSERT INTO AREA_ALMACENAMIENTO VALUES ('";
 		sql += bodega.getId() + "',";
@@ -111,7 +112,8 @@ public class DAOTablaAreas {
 		
 
 	}
-	public void addSilo (Silo silo) throws SQLException, Exception {
+	public void addSilo (Silo silo) throws SQLException, Exception 
+	{
 
 		String sql = "INSERT INTO AREA_ALMACENAMIENTO VALUES ('";
 		sql += silo.getId() + "',";
@@ -138,7 +140,8 @@ public class DAOTablaAreas {
 		
 
 	}
-	public void addPatio (Patio patio) throws SQLException, Exception {
+	public void addPatio (Patio patio) throws SQLException, Exception 
+	{
 
 		String sql = "INSERT INTO AREA_ALMACENAMIENTO VALUES ('";
 		sql += patio.getId() + "',";
@@ -166,7 +169,8 @@ public class DAOTablaAreas {
 
 	}
 
-	public void addCarga(Carga carga) throws SQLException, Exception {
+	public void addCarga(Carga carga) throws SQLException, Exception 
+	{
 		
 		String sql = "INSERT INTO CARGA VALUES ('";
 		sql += carga.getId() + "',";
@@ -183,6 +187,28 @@ public class DAOTablaAreas {
 		prepStmt.executeQuery();	
 		
 		
+	}
+
+	public ArrayList<Area> darAreas() throws SQLException, Exception 
+	{
+		ArrayList<Area> areas = new ArrayList<Area>();
+
+		String sql = "SELECT * FROM AREA_ALMACENAMIENTO";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String id=rs.getString("ID");
+			String nombre=rs.getString("NOMBRE");
+			String idPuerto=rs.getString("ID_PUERTO");
+			String capacidad=rs.getString("CAPACIDAD");
+			String estado=rs.getString("ESTADO");
+			areas.add(new Area(id, nombre, idPuerto, capacidad, estado));
+		}
+		return areas;
 	}
 
 	

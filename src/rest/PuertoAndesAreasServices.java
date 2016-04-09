@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import tm.PuertoAndesMaster;
 import vos.Bodega;
 import vos.Cobertizo;
+import vos.ListaAreas;
 import vos.ListaExportadores;
 import vos.Patio;
 import vos.Silo;
@@ -50,76 +51,19 @@ public class PuertoAndesAreasServices {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getExportadores() {
+	public Response getAreas() 
+	{
 		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		ListaExportadores exportadores;
-		try {
-			exportadores = tm.darExportadores();
-		} catch (Exception e) {
+		ListaAreas areas;
+		try 
+		{
+			areas = tm.darAreas();
+		} 
+		catch (Exception e) 
+		{
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(exportadores).build();
+		return Response.status(200).entity(areas).build();
 	}
-
-
-	@PUT
-	@Path("/cobertizo")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCobertizo(Cobertizo cobertizo) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addCobertizo(cobertizo);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(cobertizo).build();
-	}
-	
-	@PUT
-	@Path("/bodega")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addBodega(Bodega bodega) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addBodega(bodega);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(bodega).build();
-	}
-	
-	@PUT
-	@Path("/patio")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addPatio(Patio patio) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addPatio(patio);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(patio).build();
-	}
-	
-	@PUT
-	@Path("/silo")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addSilo(Silo silo) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addSilo(silo);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(silo).build();
-	}
-	
-
-	
-
 
 }
