@@ -9,13 +9,17 @@ public class Carga {
 	@JsonProperty(value="id_entrega")String id_entrega;
 	@JsonProperty(value="id_equipo")String id_equipo;
 	@JsonProperty(value="id_vehiculo")String id_vehiculo;
+	@JsonProperty(value="id_area")String id_area;
+	@JsonProperty(value="tamano")String tamano;
 	
 	public Carga(@JsonProperty(value="id")String id,
-			@JsonProperty(value="id")String tipo_carga,
-			@JsonProperty(value="id")String id_barco,
-			@JsonProperty(value="id")String id_entrega,
-			@JsonProperty(value="id")String id_equipo,
-			@JsonProperty(value="id")String id_vehiculo) {
+			@JsonProperty(value="tipo_carga")String tipo_carga,
+			@JsonProperty(value="id_barco")String id_barco,
+			@JsonProperty(value="id_entrega")String id_entrega,
+			@JsonProperty(value="id_equipo")String id_equipo,
+			@JsonProperty(value="id_vehiculo")String id_vehiculo,
+			@JsonProperty(value="id_area")String id_area,
+			@JsonProperty(value="tamano")String tamano) {
 		super();
 		this.id = id;
 		this.tipo_carga = tipo_carga;
@@ -23,6 +27,24 @@ public class Carga {
 		this.id_entrega = id_entrega;
 		this.id_equipo = id_equipo;
 		this.id_vehiculo = id_vehiculo;
+		this.id_area=id_area;
+		this.tamano=tamano;
+	}
+
+	public String getId_area() {
+		return id_area;
+	}
+
+	public void setId_area(String id_area) {
+		this.id_area = id_area;
+	}
+
+	public String getTamano() {
+		return tamano;
+	}
+
+	public void setTamano(String tamano) {
+		this.tamano = tamano;
 	}
 
 	public String getId() {

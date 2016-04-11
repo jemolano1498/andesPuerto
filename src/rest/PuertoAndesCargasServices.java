@@ -80,49 +80,6 @@ public class PuertoAndesCargasServices {
 		return Response.status(200).entity(carga).build();
 	}
 	
-	@PUT
-	@Path("/bodega")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addBodega(Bodega bodega) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addBodega(bodega);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(bodega).build();
-	}
-	
-	@PUT
-	@Path("/patio")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addPatio(Patio patio) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addPatio(patio);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(patio).build();
-	}
-	
-	@PUT
-	@Path("/silo")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addSilo(Silo silo) {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		try {
-			tm.addSilo(silo);
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(silo).build();
-	}
-	
-
 	
 
 

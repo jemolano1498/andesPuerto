@@ -24,6 +24,12 @@ public class Barco {
 	
 	@JsonProperty(value="id_muelle")
 	private String id_muelle;
+	
+	@JsonProperty(value="estado")
+	private String estado;
+	
+	@JsonProperty(value="capacidad")
+	private String capacidad;
 
 	public Barco(@JsonProperty(value="id")String id,
 			@JsonProperty(value="nombre")String nombre,
@@ -31,7 +37,9 @@ public class Barco {
 			@JsonProperty(value="registroCapitania")String registroCapitania,
 			@JsonProperty(value="id_puerto")String id_puerto,
 			@JsonProperty(value="id_ruta")String id_ruta,
-			@JsonProperty(value="id_muelle")String id_muelle) {
+			@JsonProperty(value="id_muelle")String id_muelle,
+			@JsonProperty(value="estado")String estado,
+			@JsonProperty(value="capacidad")String capacidad) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -40,6 +48,24 @@ public class Barco {
 		this.id_puerto = id_puerto;
 		this.id_ruta = id_ruta;
 		this.id_muelle = id_muelle;
+		this.estado=estado;
+		this.capacidad=capacidad;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public String getCapacidad() {
+		return capacidad;
+	}
+
+	public void setCapacidad(String capacidad) {
+		this.capacidad = capacidad;
 	}
 
 	public String getId() {

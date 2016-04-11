@@ -25,10 +25,6 @@ import vos.Importador;
 import vos.Patio;
 import vos.Silo;
 
-/**
- * Clase DAO que se conecta la base de datos usando JDBC para resolver los requerimientos de la aplicación
- * @author Juan
- */
 public class DAOTablaBarcos {
 
 
@@ -54,9 +50,37 @@ public class DAOTablaBarcos {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
+	public void setSerializable () throws SQLException
+	{
+		String sql = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		
+		sql = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
+
+		System.out.println("SQL stmt:" + sql);
+		prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	public void commitTransaction () throws SQLException
+	{
+		String sql = "COMMIT;";
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 
 	
-	public Barco registrarBuquesLLegan(String name) throws SQLException, Exception {
+	public Barco registrarBuquesLLegan(String name) throws SQLException, Exception 
+	{
 		
 		Barco barco = null;
 		String id =null;
@@ -108,15 +132,56 @@ public class DAOTablaBarcos {
 		String	puerto = (rs.getString("ID_PUERTO"));
 		String	ruta = rs.getString("ID_RUTA");
 		String	muelle = rs.getString("ID_MUELLE");
-		barco= new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle);
+		String estado = rs.getString("ESTADO");
+		String capacidad = rs.getString("CAPACIDAD");
+		barco= new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle, estado, capacidad);
 		return barco;
 		
 	}
 
-	
+	public Barco buscarBarco (String id) throws SQLException, Exception 
+	{
+		Barco barco =null;
+		String sql = "SELECT * FROM BARCO WHERE ID ='" + id + "'";
 
-	
+		System.out.println("SQL stmt:" + sql);
 
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
 
+		if(id==null)
+		{
+			throw new Exception("El barco no esta registrado");
+		}
+
+		while (rs.next())
+		{
+			String	ident = (rs.getString("ID"));
+			String	nombre = (rs.getString("NOMBRE"));
+			String	agente = rs.getString("NOMBRE_AGENTE");
+			String	capitania = (rs.getString("REGISTRO_CAPITANIA"));
+			String	puerto = (rs.getString("ID_PUERTO"));
+			String	ruta = rs.getString("ID_RUTA");
+			String	muelle = rs.getString("ID_MUELLE");
+			String estado = rs.getString("ESTADO");
+			String capacidad = rs.getString("CAPACIDAD");
+			barco= new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle, estado, capacidad);
+		}
+		
+		return barco;
+		
+	}
+	public void asignarCargaABarco (String idBarco, String carga) throws SQLException
+	{
+		String sql = "UPDATE BARCO";
+		sql += "SET CAPACIDAD ='"+ carga +"', ESTADO = '1'";
+		sql += "WHERE ID ='"+ idBarco +"';";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 
 }
