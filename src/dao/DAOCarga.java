@@ -132,8 +132,8 @@ public class DAOCarga
 	public void asignarCargaABarco (String idCarga, String idBarco) throws SQLException
 	{
 		String sql = "UPDATE CARGA";
-		sql += "SET ID_BARCO ='"+ idBarco+"',ID_AREA=''";
-		sql += "WHERE ID ='"+ idCarga +"';";
+		sql += " SET ID_BARCO ='"+ idBarco+"',ID_AREA=''";
+		sql += " WHERE ID ='"+ idCarga +"'";
 		System.out.println("SQL stmt:" + sql);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);

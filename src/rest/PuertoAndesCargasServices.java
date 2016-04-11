@@ -69,7 +69,7 @@ public class PuertoAndesCargasServices {
 	@GET
 	@Path("/cargarBarco/{identificaciones}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getVideoName(@javax.ws.rs.PathParam("identificaciones") String identificaciones) {
+	public Response cargarBarco(@javax.ws.rs.PathParam("identificaciones") String identificaciones) {
 		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
 		Carga a = null;
 		try {

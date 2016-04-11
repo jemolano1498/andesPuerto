@@ -186,7 +186,7 @@ public class DAOTablaBarcos {
 	{
 		String sql = "UPDATE BARCO ";
 		sql += "SET CAPACIDAD ='"+ carga +"', ESTADO = '1' ";
-		sql += "WHERE ID ='"+ idBarco +"';";
+		sql += "WHERE ID ='"+ idBarco +"'";
 		System.out.println("SQL stmt:" + sql);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);

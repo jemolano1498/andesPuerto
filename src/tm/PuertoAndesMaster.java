@@ -589,7 +589,7 @@ public class PuertoAndesMaster {
 			aRetornar=carguita;
 			int CapacidadBarco =Integer.parseInt(aCargar.getCapacidad());
 			int tamanioCarga = Integer.parseInt(carguita.getTamano());
-			if (tamanioCarga < CapacidadBarco)
+			if (tamanioCarga <= CapacidadBarco)
 			{
 				CapacidadBarco -= tamanioCarga;
 				daoBarcos.asignarCargaABarco(aCargar.getId(), CapacidadBarco+"");
@@ -599,25 +599,29 @@ public class PuertoAndesMaster {
 			}
 			else
 			{
-				daoBarcos.rollBackTransaction();
-				daoCarga.rollBackTransaction();
+//				daoBarcos.rollBackTransaction();
+//				daoCarga.rollBackTransaction();
 				throw new Exception ("la carga no cabe");
 			}
 			
-			daoBarcos.commitTransaction();
-			daoCarga.commitTransaction();
+//			daoBarcos.commitTransaction();
+//			daoCarga.commitTransaction();
 			
 			
 
 		} 
 		catch (SQLException e) 
 		{
+//			daoBarcos.rollBackTransaction();
+//			daoCarga.rollBackTransaction();
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
 		} 
 		catch (Exception e) 
 		{
+//			daoBarcos.rollBackTransaction();
+//			daoCarga.rollBackTransaction();
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
