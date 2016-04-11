@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vos.Importador;
 
@@ -92,6 +93,19 @@ public class DAOTablaImportadores {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 
+	}
+	
+	public void asignarEntregaAImportador(String idImportador) throws Exception 
+	{
+		Date actual = new Date();
+		String sql = "UPDATE ENTREGA ";
+		sql += "SET FECHA = '" + actual.toString() +"', ID_IMPORTADOR = '" +idImportador+"';";
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
 	}
 
 }

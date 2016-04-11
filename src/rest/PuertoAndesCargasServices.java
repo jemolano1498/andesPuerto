@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tm.PuertoAndesMaster;
+import vos.Barco;
 import vos.Bodega;
 import vos.Carga;
 import vos.Cobertizo;
@@ -51,21 +52,6 @@ public class PuertoAndesCargasServices {
 		return "{ \"ERROR\": \""+ e.getMessage() + "\"}" ;
 	}
 	
-
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getExportadores() {
-		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		ListaExportadores exportadores;
-		try {
-			exportadores = tm.darExportadores();
-		} catch (Exception e) {
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(exportadores).build();
-	}
-
-
 	@PUT
 	@Path("/registrar")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -78,6 +64,23 @@ public class PuertoAndesCargasServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(carga).build();
+	}
+	
+	@GET
+	@Path("/cargarBarco/{identificaciones}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getVideoName(@javax.ws.rs.PathParam("identificaciones") String identificaciones) {
+		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
+		Carga a = null;
+		try {
+			String [] ids = identificaciones.split("&");
+			String idBarco= ids[0];
+			String idCarga = ids[1];
+			a=tm.reqFunc10(idCarga, idBarco);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
 	}
 	
 	

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import dao.DAOCarga;
 import dao.DAOTablaAreas;
 import dao.DAOTablaBarcos;
 import dao.DAOTablaExportadores;
@@ -452,12 +453,12 @@ public class PuertoAndesMaster {
 
 	public void addCarga(Carga carga) throws Exception 
 	{
-		DAOTablaAreas daoAreas = new DAOTablaAreas();
+		DAOCarga daoCarga = new DAOCarga();
 		try 
 		{
 			this.conn = darConexion();
-			daoAreas.setConn(conn);
-			daoAreas.addCarga(carga);
+			daoCarga.setConn(conn);
+			daoCarga.RegistrarCarga(carga);
 			conn.commit();
 
 		}
@@ -477,7 +478,7 @@ public class PuertoAndesMaster {
 		{
 			try 
 			{
-				daoAreas.cerrarRecursos();
+				daoCarga.cerrarRecursos();
 				if(this.conn!=null)
 					this.conn.close();
 			} 
@@ -530,6 +531,116 @@ public class PuertoAndesMaster {
 			}
 		}
 		return new ListaAreas(areas);
+	}
+	
+	public void asignarEntregaAImportador(String idImportador) throws Exception 
+	{
+		DAOTablaExportadores daoExportadores = new DAOTablaExportadores();
+		try 
+		{
+			this.conn = darConexion();
+			daoExportadores.setConn(conn);
+			asignarEntregaAImportador(idImportador);
+
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoExportadores.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public Carga reqFunc10(String idCarga, String idBuque) throws Exception 
+	{
+		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
+		DAOCarga daoCarga = new DAOCarga();
+		Carga aRetornar=null;
+		try 
+		{
+			this.conn = darConexion();
+			daoBarcos.setConn(conn);
+			daoCarga.setConn(conn);
+//			daoBarcos.setSerializable();
+//			daoCarga.setSerializable();
+			Barco aCargar = daoBarcos.buscarBarco(idBuque);
+			Carga carguita = daoCarga.buscarCarga(idCarga);
+			aRetornar=carguita;
+			int CapacidadBarco =Integer.parseInt(aCargar.getCapacidad());
+			int tamanioCarga = Integer.parseInt(carguita.getTamano());
+			if (tamanioCarga < CapacidadBarco)
+			{
+				CapacidadBarco -= tamanioCarga;
+				daoBarcos.asignarCargaABarco(aCargar.getId(), CapacidadBarco+"");
+				daoCarga.asignarCargaABarco(carguita.getId(), aCargar.getId());
+//				asignarEntregaAImportador(carguita.getId_entrega());
+				
+			}
+			else
+			{
+				daoBarcos.rollBackTransaction();
+				daoCarga.rollBackTransaction();
+				throw new Exception ("la carga no cabe");
+			}
+			
+			daoBarcos.commitTransaction();
+			daoCarga.commitTransaction();
+			
+			
+
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoBarcos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+				daoCarga.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return aRetornar;
 	}
 	
 }

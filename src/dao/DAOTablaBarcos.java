@@ -77,6 +77,16 @@ public class DAOTablaBarcos {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	public void rollBackTransaction () throws SQLException
+	{
+		String sql = "ROLLBACK;";
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 
 	
 	public Barco registrarBuquesLLegan(String name) throws SQLException, Exception 
@@ -174,7 +184,7 @@ public class DAOTablaBarcos {
 	}
 	public void asignarCargaABarco (String idBarco, String carga) throws SQLException
 	{
-		String sql = "UPDATE BARCO";
+		String sql = "UPDATE BARCO ";
 		sql += "SET CAPACIDAD ='"+ carga +"', ESTADO = '1'";
 		sql += "WHERE ID ='"+ idBarco +"';";
 		System.out.println("SQL stmt:" + sql);

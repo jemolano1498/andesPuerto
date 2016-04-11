@@ -59,6 +59,16 @@ public class DAOCarga
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	public void rollBackTransaction () throws SQLException
+	{
+		String sql = "ROLLBACK;";
+
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
 	
 	public void RegistrarCarga (Carga carga) throws SQLException, Exception 
 	{
