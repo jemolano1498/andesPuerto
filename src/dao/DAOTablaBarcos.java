@@ -185,7 +185,7 @@ public class DAOTablaBarcos {
 	public void asignarCargaABarco (String idBarco, String carga) throws SQLException
 	{
 		String sql = "UPDATE BARCO ";
-		sql += "SET CAPACIDAD ='"+ carga +"', ESTADO = '1'";
+		sql += "SET CAPACIDAD ='"+ carga +"', ESTADO = '1' ";
 		sql += "WHERE ID ='"+ idBarco +"';";
 		System.out.println("SQL stmt:" + sql);
 
