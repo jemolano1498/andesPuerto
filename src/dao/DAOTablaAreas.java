@@ -206,9 +206,42 @@ public class DAOTablaAreas {
 			String idPuerto=rs.getString("ID_PUERTO");
 			String capacidad=rs.getString("CAPACIDAD");
 			String estado=rs.getString("ESTADO");
-			areas.add(new Area(id, nombre, idPuerto, capacidad, estado));
+			String tipo = rs.getString("TIPO");
+			areas.add(new Area(id, nombre, idPuerto, capacidad, estado, tipo));
 		}
 		return areas;
+	}
+	
+	public void reservarArea (String id) throws SQLException
+	{
+		String sql = "UPDATE AREA_ALMACENAMIENTO SET ";
+		sql += "ESTADO = '3' WHERE ID = " + id;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	public Area darArea (String id) throws SQLException
+	{
+		Area aRetornar = null;
+		String sql = "SELECT * FROM AREA_ALMACENAMIENTO WHERE ID = " + id;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String id2=rs.getString("ID");
+			String nombre=rs.getString("NOMBRE");
+			String idPuerto=rs.getString("ID_PUERTO");
+			String capacidad=rs.getString("CAPACIDAD");
+			String estado=rs.getString("ESTADO");
+			String tipo = rs.getString("TIPO");
+			aRetornar = new Area(id2, nombre, idPuerto, capacidad, estado, tipo);
+		}
+		return aRetornar;
 	}
 
 	

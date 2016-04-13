@@ -19,9 +19,12 @@ public class Area
 	@JsonProperty(value="estado")
 	private String estado;
 	
+	@JsonProperty(value="tipo")
+	private String tipo;
+	
 	public Area (@JsonProperty(value="id")String id,@JsonProperty(value="nombre")String nombre,
 			@JsonProperty(value="idPuerto")String idPuerto, @JsonProperty(value="capacidad")String capacidad,
-			@JsonProperty(value="estado")String estado)
+			@JsonProperty(value="estado")String estado, @JsonProperty(value="tipo")String tipo)
 	{
 		super();
 		this.id=id;
@@ -29,6 +32,15 @@ public class Area
 		this.idPuerto=idPuerto;
 		this.capacidad=capacidad;
 		this.estado=estado;
+		this.tipo = tipo;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getId() {

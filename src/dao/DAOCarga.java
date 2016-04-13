@@ -98,6 +98,7 @@ public class DAOCarga
 		
 		
 	}
+	
 	public Carga buscarCarga (String id) throws SQLException, Exception 
 	{
 		Carga carga =null;
@@ -109,10 +110,6 @@ public class DAOCarga
 		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
 
-		if(id==null)
-		{
-			throw new Exception("La carga no esta registrada");
-		}
 
 		while (rs.next())
 		{
@@ -126,6 +123,8 @@ public class DAOCarga
 			String tamano = rs.getString("tamano");
 			carga= new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano);
 		}
+
+		
 		
 		return carga;
 	}
@@ -133,6 +132,17 @@ public class DAOCarga
 	{
 		String sql = "UPDATE CARGA";
 		sql += " SET ID_BARCO ='"+ idBarco+"',ID_AREA=''";
+		sql += " WHERE ID ='"+ idCarga +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	public void asignarCargaAArea (String idCarga, String idArea) throws SQLException
+	{
+		String sql = "UPDATE CARGA";
+		sql += " SET ID_BARCO ='',ID_AREA='"+ idArea+"'";
 		sql += " WHERE ID ='"+ idCarga +"'";
 		System.out.println("SQL stmt:" + sql);
 

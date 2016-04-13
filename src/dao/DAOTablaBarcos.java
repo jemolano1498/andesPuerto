@@ -193,5 +193,52 @@ public class DAOTablaBarcos {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
+	
+	public void descargarABarco (String idBarco, String carga) throws SQLException
+	{
+		String sql = "UPDATE BARCO ";
+		sql += "SET CAPACIDAD ='"+ carga +"', ESTADO = '6' ";
+		sql += "WHERE ID ='"+ idBarco +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	public void dejarDisponible (String idBarco) throws SQLException
+	{
+		String sql = "UPDATE BARCO ";
+		sql += "SET ESTADO = '4' ";
+		sql += "WHERE ID ='"+ idBarco +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	public boolean noTieneDestinoPuertoAndes (String idBarco) throws SQLException
+	{
+		boolean a = true;
+		String sql = "SELECT COUNT(*) AS CUENTA FROM";
+		sql +="CARGA JOIN BARCO";
+		sql +="ON CARGA.ID_BARCO=BARCO.ID";
+		sql +="WHERE DESTINO = '1' AND ID_BARCO='" +idBarco + "'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs =prepStmt.executeQuery();
+		while (rs.next())
+		{
+			int	ident = Integer.parseInt((rs.getString("CUENTA")));
+			if (ident>0)
+			{
+				a=false;
+			}
+		}
+		return a;
+	}
 
 }

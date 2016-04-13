@@ -83,6 +83,23 @@ public class PuertoAndesCargasServices {
 		return Response.status(200).entity(a).build();
 	}
 	
+	@GET
+	@Path("/descargarBarco/{identificaciones}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response descargarBarco(@javax.ws.rs.PathParam("identificaciones") String identificaciones) {
+		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
+		Carga a = null;
+		try {
+			String [] ids = identificaciones.split("&");
+			String idArea= ids[0];
+			String idCarga = ids[1];
+			a=tm.reqFunc11(idCarga, idArea);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
+	}
+	
 	
 
 

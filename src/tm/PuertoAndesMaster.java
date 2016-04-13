@@ -646,5 +646,104 @@ public class PuertoAndesMaster {
 		}
 		return aRetornar;
 	}
+	public Carga reqFunc11(String idCarga, String idArea) throws Exception 
+	{
+		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
+		DAOCarga daoCarga = new DAOCarga();
+		DAOTablaAreas daoArea = new DAOTablaAreas();
+		Carga aRetornar=null;
+		
+		try 
+		{
+			this.conn = darConexion();
+			daoBarcos.setConn(conn);
+			daoCarga.setConn(conn);
+			daoArea.setConn(conn);
+//			daoBarcos.setSerializable();
+//			daoCarga.setSerializable();
+			Carga carguita = daoCarga.buscarCarga(idCarga);
+			Area aLlenar = daoArea.darArea(idArea);
+			if (carguita == null)
+			{
+				throw new Exception("Carga no esta registrada");
+			}
+			if(carguita.getId_area()!=null)
+			{
+				throw new Exception("La carga ya está almacenada en una área" );
+			}
+			if (aLlenar == null)
+			{
+				throw new Exception("Area no existe");
+			}
+			
+			int CapacidadArea =Integer.parseInt(aLlenar.getCapacidad());
+			int tamanioCarga = Integer.parseInt(carguita.getTamano());
+			if (tamanioCarga <= CapacidadArea)
+			{
+				CapacidadArea -= tamanioCarga;
+				daoArea.reservarArea(idArea);
+				daoBarcos.descargarABarco(aLlenar.getId(), CapacidadArea+"");
+				daoCarga.asignarCargaAArea(carguita.getId(), aLlenar.getId());
+				if (daoBarcos.noTieneDestinoPuertoAndes(carguita.getId_barco()))
+				{
+					daoBarcos.rollBackTransaction();
+				}
+				daoBarcos.dejarDisponible (carguita.getId_barco());
+//				asignarEntregaAImportador(carguita.getId_entrega());
+				
+			}
+			else
+			{
+//				daoBarcos.rollBackTransaction();
+//				daoCarga.rollBackTransaction();
+				throw new Exception ("la carga no cabe");
+			}
+			aRetornar = daoCarga.buscarCarga(idCarga);
+			
+//			daoBarcos.commitTransaction();
+//			daoCarga.commitTransaction();
+			
+			
+
+		} 
+		catch (SQLException e) 
+		{
+//			daoBarcos.rollBackTransaction();
+//			daoCarga.rollBackTransaction();
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+//			daoBarcos.rollBackTransaction();
+//			daoCarga.rollBackTransaction();
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoBarcos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+				daoCarga.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+				daoArea.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return aRetornar;
+	}
 	
 }
