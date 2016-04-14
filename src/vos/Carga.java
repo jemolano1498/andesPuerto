@@ -11,6 +11,7 @@ public class Carga {
 	@JsonProperty(value="id_vehiculo")String id_vehiculo;
 	@JsonProperty(value="id_area")String id_area;
 	@JsonProperty(value="tamano")String tamano;
+	@JsonProperty(value="destino")String destino;
 	
 	public Carga(@JsonProperty(value="id")String id,
 			@JsonProperty(value="tipo_carga")String tipo_carga,
@@ -19,7 +20,8 @@ public class Carga {
 			@JsonProperty(value="id_equipo")String id_equipo,
 			@JsonProperty(value="id_vehiculo")String id_vehiculo,
 			@JsonProperty(value="id_area")String id_area,
-			@JsonProperty(value="tamano")String tamano) {
+			@JsonProperty(value="tamano")String tamano,
+			@JsonProperty(value="destino")String destino) {
 		super();
 		this.id = id;
 		this.tipo_carga = tipo_carga;
@@ -29,6 +31,15 @@ public class Carga {
 		this.id_vehiculo = id_vehiculo;
 		this.id_area=id_area;
 		this.tamano=tamano;
+		this.destino=destino;
+	}
+
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
 	}
 
 	public String getId_area() {

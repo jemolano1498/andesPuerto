@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Carga;
+import vos.Exportador;
 
 public class DAOCarga 
 {
@@ -32,44 +33,7 @@ public class DAOCarga
 	public void setConn(Connection con){
 		this.conn = con;
 	}
-	public void setSerializable () throws SQLException
-	{
-		String sql = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
 
-		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-		
-		sql = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
-
-		System.out.println("SQL stmt:" + sql);
-		prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	public void commitTransaction () throws SQLException
-	{
-		String sql = "COMMIT;";
-
-		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	public void rollBackTransaction () throws SQLException
-	{
-		String sql = "ROLLBACK;";
-
-		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	
 	public void RegistrarCarga (Carga carga) throws SQLException, Exception 
 	{
 		if (carga.getId_barco()!=null)
@@ -93,12 +57,12 @@ public class DAOCarga
 		{
 			throw new Exception("Carga no valida");
 		}
-		
 
-		
-		
+
+
+
 	}
-	
+
 	public Carga buscarCarga (String id) throws SQLException, Exception 
 	{
 		Carga carga =null;
@@ -121,11 +85,12 @@ public class DAOCarga
 			String	id_vehiculo = rs.getString("id_vehiculo");
 			String	id_area = rs.getString("id_area");
 			String tamano = rs.getString("tamano");
-			carga= new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano);
+			String destino = rs.getString("destino");
+			carga= new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano, destino);
 		}
 
-		
-		
+
+
 		return carga;
 	}
 	public void asignarCargaABarco (String idCarga, String idBarco) throws SQLException
@@ -150,6 +115,131 @@ public class DAOCarga
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 	}
-	
+
+	public ArrayList<Carga> consultarCargasImportador(String origen, String idImportador, String idCarga,
+			String destino, String tipo, String fecha) throws SQLException 
+	{
+		ArrayList<Carga> cargas = new ArrayList<Carga>();
+		String sql = "SELECT CARGA.ID, CARGA.TIPO_CARGA, CARGA.ID_BARCO, CARGA.ID_ENTREGA, CARGA.ID_EQUIPO,";
+		sql += "CARGA.ID_VEHICULO, CARGA.ID_AREA, CARGA.TAMANO, CARGA.DESTINO ";
+		sql +="FROM (ENTREGA JOIN IMPORTADOR ON ENTREGA.ID_IMPORTADOR= IMPORTADOR.ID) JOIN CARGA ON ENTREGA.ID=CARGA.ID_ENTREGA WHERE ";
+		sql +="IMPORTADOR.ID = '"+idImportador+"' ";
+		int a=0;
+		if (!destino.equals(""))
+		{
+			sql+="AND ";
+			sql += "CARGA.DESTINO = (SELECT ID FROM PUERTO WHERE PUERTO.NOMBRE ='"+destino+"') ";
+			a++;
+		}
+		if (!fecha.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql += "ENTREGA.FECHA = '"+fecha+"' ";
+			a++;
+		}
+		if (!tipo.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql += "CARGA.TIPO_CARGA = (SELECT ID FROM TIPO_CARGA WHERE TIPO_CARGA.NOMBRE ='"+tipo+"') ";
+			a++;
+		}
+		if (!idCarga.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql += "CARGA.ID = '"+idCarga+"' ";
+			a++;
+		}
+		System.out.println("SQL stmt:" + sql);
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String	id2 = (rs.getString("id"));
+			String	tipo_carga = (rs.getString("tipo_carga"));
+			String	id_barco = rs.getString("id_barco");
+			String	id_entrega = (rs.getString("id_entrega"));
+			String	id_equipo = (rs.getString("id_equipo"));
+			String	id_vehiculo = rs.getString("id_vehiculo");
+			String	id_area = rs.getString("id_area");
+			String tamano = rs.getString("tamano");
+			String destino2 = rs.getString("destino");
+			cargas.add(new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano, destino2));
+		}
+		return cargas;
+
+
+	}
+
+	public ArrayList<Carga> consultarCargas(String origen, String idCarga, String destino, String tipo, String fecha) throws SQLException {
+		ArrayList<Carga> cargas = new ArrayList<Carga>();
+		String sql = "SELECT CARGA.ID, CARGA.TIPO_CARGA, CARGA.ID_BARCO, CARGA.ID_ENTREGA, CARGA.ID_EQUIPO,";
+		sql += "CARGA.ID_VEHICULO, CARGA.ID_AREA, CARGA.TAMANO, CARGA.DESTINO ";
+		sql +="FROM (ENTREGA JOIN IMPORTADOR ON ENTREGA.ID_IMPORTADOR= IMPORTADOR.ID) JOIN CARGA ON ENTREGA.ID=CARGA.ID_ENTREGA WHERE ";
+
+		int a=0;
+		if (!destino.equals(""))
+		{
+			sql += "CARGA.DESTINO = (SELECT ID FROM PUERTO WHERE PUERTO.NOMBRE ='"+destino+"') ";
+			a++;
+		}
+		if (!fecha.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql += "ENTREGA.FECHA = '"+fecha+"' ";
+			a++;
+		}
+		if (!tipo.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql += "CARGA.TIPO_CARGA = (SELECT ID FROM TIPO_CARGA WHERE TIPO_CARGA.NOMBRE ='"+tipo+"') ";
+			a++;
+		}
+		if (!idCarga.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql += "CARGA.ID = '"+idCarga+"' ";
+			a++;
+		}
+		System.out.println("SQL stmt:" + sql);
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String	id2 = (rs.getString("id"));
+			String	tipo_carga = (rs.getString("tipo_carga"));
+			String	id_barco = rs.getString("id_barco");
+			String	id_entrega = (rs.getString("id_entrega"));
+			String	id_equipo = (rs.getString("id_equipo"));
+			String	id_vehiculo = rs.getString("id_vehiculo");
+			String	id_area = rs.getString("id_area");
+			String tamano = rs.getString("tamano");
+			String destino2 = rs.getString("destino");
+			cargas.add(new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano, destino2));
+		}
+		return cargas;
+	}
+
 
 }

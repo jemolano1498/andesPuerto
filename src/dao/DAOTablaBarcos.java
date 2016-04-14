@@ -20,8 +20,11 @@ import java.util.ArrayList;
 
 import vos.Barco;
 import vos.Bodega;
+import vos.Carga;
 import vos.Cobertizo;
+import vos.Exportador;
 import vos.Importador;
+import vos.ListaCargas;
 import vos.Patio;
 import vos.Silo;
 
@@ -50,44 +53,6 @@ public class DAOTablaBarcos {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
-	public void setSerializable () throws SQLException
-	{
-		String sql = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
-
-		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-		
-		sql = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
-
-		System.out.println("SQL stmt:" + sql);
-		prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	public void commitTransaction () throws SQLException
-	{
-		String sql = "COMMIT;";
-
-		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-	public void rollBackTransaction () throws SQLException
-	{
-		String sql = "ROLLBACK;";
-
-		System.out.println("SQL stmt:" + sql);
-
-		PreparedStatement prepStmt = conn.prepareStatement(sql);
-		recursos.add(prepStmt);
-		prepStmt.executeQuery();
-	}
-
 	
 	public Barco registrarBuquesLLegan(String name) throws SQLException, Exception 
 	{
@@ -218,12 +183,24 @@ public class DAOTablaBarcos {
 		prepStmt.executeQuery();
 	}
 	
+	public void deshabilitarBarco (String idBarco, String estado) throws SQLException
+	{
+		String sql = "UPDATE BARCO ";
+		sql += "SET ESTADO = '"+ estado +"' ";
+		sql += "WHERE ID ='"+ idBarco +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
 	public boolean noTieneDestinoPuertoAndes (String idBarco) throws SQLException
 	{
 		boolean a = true;
-		String sql = "SELECT COUNT(*) AS CUENTA FROM";
-		sql +="CARGA JOIN BARCO";
-		sql +="ON CARGA.ID_BARCO=BARCO.ID";
+		String sql = "SELECT COUNT(*) AS CUENTA FROM ";
+		sql +="CARGA JOIN BARCO ";
+		sql +="ON CARGA.ID_BARCO=BARCO.ID ";
 		sql +="WHERE DESTINO = '1' AND ID_BARCO='" +idBarco + "'";
 		System.out.println("SQL stmt:" + sql);
 
@@ -239,6 +216,67 @@ public class DAOTablaBarcos {
 			}
 		}
 		return a;
+	}
+	
+	public ArrayList<Carga> darCargasBarco (String idBuque) throws SQLException
+	{
+		ArrayList<Carga> cargas = new ArrayList<Carga>();
+
+		String sql = "SELECT CARGA.ID, CARGA.TIPO_CARGA, CARGA.ID_BARCO, CARGA.ID_ENTREGA, ";
+		sql += "CARGA.ID_EQUIPO, CARGA.ID_VEHICULO, CARGA.ID_AREA, CARGA.TAMANO, CARGA.DESTINO FROM ";
+		sql += "CARGA JOIN BARCO ";
+		sql += "ON CARGA.ID_BARCO = BARCO.ID ";
+		sql += "WHERE BARCO.ID = '"+ idBuque +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String	id2 = (rs.getString("id"));
+			String	tipo_carga = (rs.getString("tipo_carga"));
+			String	id_barco = rs.getString("id_barco");
+			String	id_entrega = (rs.getString("id_entrega"));
+			String	id_equipo = (rs.getString("id_equipo"));
+			String	id_vehiculo = rs.getString("id_vehiculo");
+			String	id_area = rs.getString("id_area");
+			String tamano = rs.getString("tamano");
+			String destino = rs.getString("destino");
+			cargas.add(new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano, destino));
+		}
+		
+		return cargas;
+	}
+	
+	public ArrayList<Barco> darBarcosConDestino (String destino) throws SQLException
+	{
+		ArrayList<Barco> barcos = new ArrayList<Barco>();
+
+		String sql = "SELECT * FROM BARCO ";
+		sql += "WHERE ID_PUERTO=" + destino;
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String	ident = (rs.getString("ID"));
+			String	nombre = (rs.getString("NOMBRE"));
+			String	agente = rs.getString("NOMBRE_AGENTE");
+			String	capitania = (rs.getString("REGISTRO_CAPITANIA"));
+			String	puerto = (rs.getString("ID_PUERTO"));
+			String	ruta = rs.getString("ID_RUTA");
+			String	muelle = rs.getString("ID_MUELLE");
+			String estado = rs.getString("ESTADO");
+			String capacidad = rs.getString("CAPACIDAD");
+			barcos.add(new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle, estado, capacidad));
+		}
+		
+		return barcos;
 	}
 
 }

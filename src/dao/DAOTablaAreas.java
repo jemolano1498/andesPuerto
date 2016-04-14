@@ -243,6 +243,91 @@ public class DAOTablaAreas {
 		}
 		return aRetornar;
 	}
+	
+	public void asignarCargaArea (String idArea, String carga) throws SQLException
+	{
+		String sql = "UPDATE BARCO ";
+		sql += "SET CAPACIDAD ='"+ carga +"'";
+		sql += "WHERE ID ='"+ idArea +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+	}
+	
+	public ArrayList<Area> darAreasPorTipo( String tipoCarga) throws SQLException, Exception 
+	{
+		ArrayList<Area> areas = new ArrayList<Area>();
+
+		String sql = "SELECT * FROM AREA_ALMACENAMIENTO";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String id=rs.getString("ID");
+			String nombre=rs.getString("NOMBRE");
+			String idPuerto=rs.getString("ID_PUERTO");
+			String capacidad=rs.getString("CAPACIDAD");
+			String estado=rs.getString("ESTADO");
+			String tipo = rs.getString("TIPO");
+			areas.add(new Area(id, nombre, idPuerto, capacidad, estado, tipo));
+		}
+		return areas;
+	}
+	public void cambiarAreaAlmacenamiento (String idAnterior, String nuevaCap1,
+			String nuevaCap2, String idNuevo) throws SQLException
+	{
+		String sql = "UPDATE AREA_ALMACENAMIENTO SET CAPACIDAD = '";
+		sql += nuevaCap1 + "' , ESTADO = '2' WHERE ID = " + idAnterior;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		
+		sql = "UPDATE AREA_ALMACENAMIENTO SET CAPACIDAD = '";
+		sql += nuevaCap2 + "' , ESTADO = '1' WHERE ID = " + idNuevo;
+		
+		prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
+		
+	}
+	
+	public ArrayList<Carga> darCargasArea (String idArea) throws SQLException
+	{
+		ArrayList<Carga> cargas = new ArrayList<Carga>();
+
+		String sql = "SELECT CARGA.ID, CARGA.TIPO_CARGA, CARGA.ID_BARCO, CARGA.ID_ENTREGA, ";
+		sql += "CARGA.ID_EQUIPO, CARGA.ID_VEHICULO, CARGA.ID_AREA, CARGA.TAMANO, CARGA.DESTINO FROM ";
+		sql += "CARGA JOIN AREA_ALMACENAMIENTO ";
+		sql += "ON CARGA.ID_AREA = AREA_ALMACENAMIENTO.ID ";
+		sql += "WHERE AREA_ALMACENAMIENTO.ID = '"+ idArea +"'";
+		System.out.println("SQL stmt:" + sql);
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String	id2 = (rs.getString("id"));
+			String	tipo_carga = (rs.getString("tipo_carga"));
+			String	id_barco = rs.getString("id_barco");
+			String	id_entrega = (rs.getString("id_entrega"));
+			String	id_equipo = (rs.getString("id_equipo"));
+			String	id_vehiculo = rs.getString("id_vehiculo");
+			String	id_area = rs.getString("id_area");
+			String tamano = rs.getString("tamano");
+			String destino = rs.getString("destino");
+			cargas.add(new Carga(id2,tipo_carga,id_barco,id_entrega,id_equipo,id_vehiculo,id_area, tamano, destino));
+		}
+		
+		return cargas;
+	}
 
 	
 
