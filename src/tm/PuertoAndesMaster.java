@@ -927,12 +927,6 @@ public class PuertoAndesMaster {
 				}
 			}
 
-
-
-
-
-
-
 		} 
 		catch (SQLException e) 
 		{
@@ -1016,6 +1010,55 @@ public class PuertoAndesMaster {
 			}
 		}
 		return new ListaCargas(cargas);
+	}
+
+	public ListaAreas darInfoArea(String idImportador, String estado, String idArea, String tipo, int x) throws SQLException {
+		ArrayList<Area> areas=null;
+		DAOTablaAreas daoAreas = new DAOTablaAreas();
+		try 
+		{
+			this.conn = darConexion();
+			daoAreas.setConn(conn);
+			if (x==0)
+			{
+				areas = daoAreas.consultarAreas( idImportador, estado, idArea, tipo);
+			}
+			else
+			{
+				areas = daoAreas.consultarAreas( idImportador, estado, idArea, tipo);
+			}
+			
+
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoAreas.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception)
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return new ListaAreas(areas);
+		
 	}
 
 

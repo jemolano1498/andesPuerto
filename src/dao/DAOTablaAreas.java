@@ -328,6 +328,63 @@ public class DAOTablaAreas {
 		
 		return cargas;
 	}
+	
+	public ArrayList<Area> consultarAreas(String idImportador, String estado, String idArea, String tipo) throws SQLException {
+		ArrayList<Area> areas = new ArrayList<Area>();
+		String sql = "SELECT * FROM AREA_ALMACENAMIENTO WHERE ";
+		sql+="AREA_ALMACENAMIENTO.ID IN(SELECT CARGA.ID_AREA FROM((CARGA JOIN ENTREGA ON CARGA.ID_ENTREGA=ENTREGA.ID) JOIN "; 
+		sql+="IMPORTADOR ON ENTREGA.ID_IMPORTADOR = IMPORTADOR.ID) ";
+		if (!idImportador.equals(""))
+		{
+			sql+="WHERE IMPORTADOR.ID='"+ idImportador+"' ";
+		}
+		sql+=")";
+		int a=0;
+		if (!tipo.equals(""))
+		{
+			sql+=" AND AREA_ALMACENAMIENTO.TIPO = (SELECT TIPO_AREA.ID FROM TIPO_AREA ";
+			sql+="WHERE TIPO_AREA.NOMBRE = '"+tipo+"') ";
+			a++;
+		}
+		
+		if (!estado.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql+="AREA_ALMACENAMIENTO.ESTADO = (SELECT ESTADO_AREA.ID FROM ESTADO_AREA ";
+			sql+="WHERE ESTADO_AREA.NOMBRE = '"+estado+"') ";
+			a++;
+		}
+		if (!idArea.equals(""))
+		{
+			if (a>0)
+			{
+				sql+="AND ";
+			}
+			sql+="AREA_ALMACENAMIENTO.ID = '"+idArea+"') ";
+			a++;
+		}
+		
+		
+		System.out.println("SQL stmt:" + sql);
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String id=rs.getString("ID");
+			String nombre=rs.getString("NOMBRE");
+			String idPuerto=rs.getString("ID_PUERTO");
+			String capacidad=rs.getString("CAPACIDAD");
+			String estado2=rs.getString("ESTADO");
+			String tipo2 = rs.getString("TIPO");
+			areas.add(new Area(id, nombre, idPuerto, capacidad, estado2, tipo2));
+		}
+		return areas;
+	}
 
 	
 

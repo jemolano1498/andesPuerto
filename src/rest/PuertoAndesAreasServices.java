@@ -125,5 +125,29 @@ public class PuertoAndesAreasServices {
 		}
 		return Response.status(200).entity(carg).build();
 	}
+	
+	@GET
+	@Path("/consultarArea")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response consultarCarga(@DefaultValue("") @QueryParam("estado") String estado,
+			@DefaultValue("") @QueryParam("importador") String idImportador,
+			@DefaultValue("") @QueryParam("area") String idArea,
+			@DefaultValue("") @QueryParam("tipo") String tipo) {
+		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
+		ListaAreas a =null;
+		try {
+			if (!idImportador.equals(""))
+			{
+				a=tm.darInfoArea(idImportador, estado, idArea, tipo,  0);
+			}
+			else
+			{
+				a=tm.darInfoArea(idImportador,estado, idArea, tipo, 1);
+			}
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
+	}
 
 }
