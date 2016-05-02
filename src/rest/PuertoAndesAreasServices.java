@@ -129,7 +129,7 @@ public class PuertoAndesAreasServices {
 	@GET
 	@Path("/consultarArea")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response consultarCarga(@DefaultValue("") @QueryParam("estado") String estado,
+	public Response consultarArea(@DefaultValue("") @QueryParam("estado") String estado,
 			@DefaultValue("") @QueryParam("importador") String idImportador,
 			@DefaultValue("") @QueryParam("area") String idArea,
 			@DefaultValue("") @QueryParam("tipo") String tipo) {

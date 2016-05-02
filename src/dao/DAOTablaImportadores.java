@@ -4,7 +4,7 @@
  * Departamento de Ingeniería de Sistemas y Computación
  *
  * Materia: Sistemas Transaccionales
- * Ejercicio: VideoAndes
+ * Ejercicio: puertoAndes
  * Autor: Juan Felipe García - jf.garcia268@uniandes.edu.co
  * -------------------------------------------------------------------
  */
@@ -78,14 +78,14 @@ public class DAOTablaImportadores {
 	}
 
 	//ARREGLAR
-	public void addImportador(Importador video) throws SQLException, Exception {
+	public void addImportador(Importador importador) throws SQLException, Exception {
 
 		String sql = "INSERT INTO IMPORTADOR VALUES (";
-		sql += video.getId() + ",'";
-		sql += video.getNombre() + "','";
-		sql += video.getTipo() + "','";
-		sql += video.getRegistro() + "','";
-		sql += video.getTipo2() + "')";
+		sql += importador.getId() + ",'";
+		sql += importador.getNombre() + "','";
+		sql += importador.getTipo() + "','";
+		sql += importador.getRegistro() + "','";
+		sql += importador.getTipo2() + "')";
 
 		System.out.println("SQL stmt:" + sql);
 

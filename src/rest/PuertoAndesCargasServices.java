@@ -104,7 +104,7 @@ public class PuertoAndesCargasServices {
 	@GET
 	@Path("/consultarCarga")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response consultarCarga(@DefaultValue("") @QueryParam("origen") String origen,
+	public Response consultarMovimientosCarga(@DefaultValue("") @QueryParam("origen") String origen,
 			@DefaultValue("") @QueryParam("importador") String idImportador,
 			@DefaultValue("") @QueryParam("fecha") String fecha,
 			@DefaultValue("") @QueryParam("carga") String idCarga,

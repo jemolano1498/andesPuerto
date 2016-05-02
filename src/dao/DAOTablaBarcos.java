@@ -19,14 +19,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Barco;
-import vos.Bodega;
 import vos.Carga;
-import vos.Cobertizo;
-import vos.Exportador;
-import vos.Importador;
-import vos.ListaCargas;
-import vos.Patio;
-import vos.Silo;
+import vos.Llegan;
+import vos.Salen;
+import vos.VistaArriboSalida;
 
 public class DAOTablaBarcos {
 
@@ -54,38 +50,54 @@ public class DAOTablaBarcos {
 		this.conn = con;
 	}
 	
-	public Barco registrarBuquesLLegan(String name) throws SQLException, Exception 
+	public void registrarBarco(Barco barco) throws SQLException, Exception
 	{
-		
-		Barco barco = null;
-		String id =null;
-		String name2 = null;
-		String fecha = null;
-		String destino = null;
-		
-		String sql = "SELECT * FROM LLEGAN WHERE ID_BARCO ='" + name + "'";
+		String sql = "INSERT INTO BARCO VALUES ('";
+		sql += barco.getId() + "','";
+		sql += barco.getNombre() + "','";
+		sql += barco.getNombreAgente() + "','";
+		sql += barco.getRegistroCapitania() + "','";
+		sql += barco.getRegistroCapitania() + "','";
+		sql += barco.getId_ruta() + "','";
+		sql += barco.getEstado() + "','";
+		sql += barco.getCapacidad() + "','";
+		sql += barco.getTipo() + "')";
 
 		System.out.println("SQL stmt:" + sql);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
+		prepStmt.executeQuery();	
+	}
+	
+	public void registrarBuquesSalen(Salen salen) throws SQLException, Exception
+	{
+		String sql = "SELECT * FROM BARCO WHERE ESTADO = '3' OR ESTADO = '4' OR ESTADO = '5';";
+		
+		System.out.println("SQL stmt:" + sql);
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
 		ResultSet rs = prepStmt.executeQuery();
-
-		while (rs.next()) {
-			id = (rs.getString("ID_BARCO"));
-			fecha = (rs.getString("FECHA_LLEGADA"));
-			destino = rs.getString("DESTINO_FINAL");
+		
+		String ident = null;
+		
+		while(rs.next())
+		{
+			ident = (rs.getString("ID"));
 		}
 		
-		if(id==null)
+		if(ident==null || ident != salen.getIdBarco())
 		{
-			throw new Exception("El barco no ha llegado");
+			throw new Exception("El barco no puede salir");
 		}
 		
 		sql = "INSERT INTO SALEN VALUES ('";
-		sql += id + "','";
-		sql += fecha + "','";
-		sql += destino + "')";
+		sql += salen.getIdBarco() + "','";
+		sql += salen.getFechaSalida() + "','";
+		sql += salen.gethoraSalida() + "','";
+		sql += salen.getIdMuelle() + "','";
+		sql += salen.getDestino() + "')";
 
 		System.out.println("SQL stmt:" + sql);
 
@@ -93,25 +105,50 @@ public class DAOTablaBarcos {
 		recursos.add(prepStmt);
 		prepStmt.executeQuery();
 		
-		sql = "SELECT * FROM BARCO WHERE ID ='"+ name + "'";
+		sql = "UPDATE BARCO SET ESTADO = '3' WHERE ID = '";
+		sql += salen.getIdBarco() + "';";
+
 		System.out.println("SQL stmt:" + sql);
 
 		prepStmt = conn.prepareStatement(sql);
 		recursos.add(prepStmt);
-		rs = prepStmt.executeQuery();
-		rs.next();
-		String	ident = (rs.getString("ID"));
-		String	nombre = (rs.getString("NOMBRE"));
-		String	agente = rs.getString("NOMBRE_AGENTE");
-		String	capitania = (rs.getString("REGISTRO_CAPITANIA"));
-		String	puerto = (rs.getString("ID_PUERTO"));
-		String	ruta = rs.getString("ID_RUTA");
-		String	muelle = rs.getString("ID_MUELLE");
-		String estado = rs.getString("ESTADO");
-		String capacidad = rs.getString("CAPACIDAD");
-		barco= new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle, estado, capacidad);
-		return barco;
+		prepStmt.executeQuery();
+	}
+	
+	public void registrarBuquesLlegan(Llegan llegan) throws SQLException, Exception
+	{
+		String sql = "SELECT * FROM BARCO WHERE ESTADO = '2';";
 		
+		System.out.println("SQL stmt:" + sql);
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		String ident = null;
+		
+		while(rs.next())
+		{
+			ident = (rs.getString("ID"));
+		}
+		
+		if(ident==null || ident != llegan.getIdBarco())
+		{
+			throw new Exception("El estado del barco no es correcto");
+		}
+		
+		sql = "INSERT INTO LLEGAN VALUES ('";
+		sql += llegan.getIdBarco() + "','";
+		sql += llegan.getFechaLlegada() + "','";
+		sql += llegan.getHora() + "','";
+		sql += llegan.getIdMuelle() + "','";
+		sql += llegan.getOrigen() + "')";
+
+		System.out.println("SQL stmt:" + sql);
+
+		prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		prepStmt.executeQuery();
 	}
 
 	public Barco buscarBarco (String id) throws SQLException, Exception 
@@ -136,17 +173,17 @@ public class DAOTablaBarcos {
 			String	nombre = (rs.getString("NOMBRE"));
 			String	agente = rs.getString("NOMBRE_AGENTE");
 			String	capitania = (rs.getString("REGISTRO_CAPITANIA"));
-			String	puerto = (rs.getString("ID_PUERTO"));
 			String	ruta = rs.getString("ID_RUTA");
-			String	muelle = rs.getString("ID_MUELLE");
 			String estado = rs.getString("ESTADO");
 			String capacidad = rs.getString("CAPACIDAD");
-			barco= new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle, estado, capacidad);
+			String tipo = rs.getString("TIPO");
+			barco= new Barco(ident,nombre,agente,capitania,ruta, estado, capacidad, tipo);
 		}
 		
 		return barco;
 		
 	}
+	
 	public void asignarCargaABarco (String idBarco, String carga) throws SQLException
 	{
 		String sql = "UPDATE BARCO ";
@@ -250,12 +287,12 @@ public class DAOTablaBarcos {
 		return cargas;
 	}
 	
-	public ArrayList<Barco> darBarcosConDestino (String destino) throws SQLException
+	public ArrayList<Barco> darBarcosConDestino (String iddestino) throws SQLException
 	{
 		ArrayList<Barco> barcos = new ArrayList<Barco>();
 
 		String sql = "SELECT * FROM BARCO ";
-		sql += "WHERE ID_PUERTO=" + destino;
+		sql += "WHERE (SELECT DESTINO FROM SALEN) = '" + iddestino + "'";
 		System.out.println("SQL stmt:" + sql);
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -268,15 +305,79 @@ public class DAOTablaBarcos {
 			String	nombre = (rs.getString("NOMBRE"));
 			String	agente = rs.getString("NOMBRE_AGENTE");
 			String	capitania = (rs.getString("REGISTRO_CAPITANIA"));
-			String	puerto = (rs.getString("ID_PUERTO"));
 			String	ruta = rs.getString("ID_RUTA");
-			String	muelle = rs.getString("ID_MUELLE");
 			String estado = rs.getString("ESTADO");
 			String capacidad = rs.getString("CAPACIDAD");
-			barcos.add(new Barco(ident,nombre,agente,capitania,puerto,ruta,muelle, estado, capacidad));
+			String tipo = rs.getString("TIPO");
+			barcos.add(new Barco(ident,nombre,agente,capitania,ruta, estado, capacidad, tipo));
 		}
 		
 		return barcos;
 	}
-
+	
+	public ArrayList<VistaArriboSalida> consultarArriboSalida1(Date fecha1, Date fecha2, String nombreBarco, String tipoBarco, String tipoCarga) throws SQLException
+	{
+		ArrayList<VistaArriboSalida> asb = new ArrayList<VistaArriboSalida>();
+		String sql = "SELECT DISTINCT NOMBRE BARCO,FECHA_LLEGADA FECHA,HORA_LLEGADA HORA,ESTADO,ID_RUTA, " +
+				"TIPO TIPO_BARCO,ID_MUELLE,ORIGEN PUERTO, C.TIPO_CARGA FROM CARGA C JOIN " +
+				"(SELECT DISTINCT ID,NOMBRE,FECHA_LLEGADA,HORA_LLEGADA,ESTADO,ID_RUTA,TIPO,ID_MUELLE,ORIGEN " +
+				"FROM BARCO JOIN LLEGAN ON BARCO.ID = LLEGAN.ID_BARCO " +
+				"UNION SELECT DISTINCT ID, NOMBRE,FECHA_SALIDA,HORA_SALIDA,ESTADO,ID_RUTA,TIPO,ID_MUELLE,DESTINO " + 
+				"FROM BARCO JOIN SALEN ON BARCO.ID = SALEN.ID_BARCO) L ON L.ID = C.ID_BARCO ";
+		sql += "WHERE FECHA_LLEGADA  BETWEEN '"+ fecha1 + "' AND '"+ fecha2 + "' " + "AND NOMBRE = '" 
+				+ nombreBarco + "' AND TIPO = '" + tipoBarco + "' AND C.TIPO_CARGA = '" + tipoCarga + "';";
+		System.out.println("SQL stmt:" + sql);
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		while (rs.next()) 
+		{	
+			String	barco = (rs.getString("BARCO"));
+			Date fecha = (rs.getDate("FECHA"));
+			String	hora = rs.getString("HORA");
+			String	estado = (rs.getString("ESTADO"));
+			String	ruta = rs.getString("ID_RUTA");
+			String tipoDeBarco = rs.getString("TIPO_BARCO");
+			String idMuelle = rs.getString("ID_MUELLE");
+			String puerto = rs.getString("PUERTO");
+			String carga = rs.getString("TIPO_CARGA");
+			asb.add(new VistaArriboSalida(barco, fecha, hora, estado, ruta, tipoDeBarco, idMuelle, puerto, carga));
+		}
+		return asb;
+	}
+	
+	public ArrayList<VistaArriboSalida> consultarArriboSalida2(Date fecha1, Date fecha2, String nombreBarco, String tipoBarco, String tipoCarga) throws SQLException
+	{	
+		ArrayList<VistaArriboSalida> asb = new ArrayList<VistaArriboSalida>();
+		String sql = "SELECT DISTINCT NOMBRE BARCO,FECHA_LLEGADA FECHA,HORA_LLEGADA HORA,ESTADO,ID_RUTA, " +
+				"TIPO TIPO_BARCO,ID_MUELLE,ORIGEN PUERTO, C.TIPO_CARGA FROM CARGA C JOIN " +
+				"(SELECT DISTINCT ID,NOMBRE,FECHA_LLEGADA,HORA_LLEGADA,ESTADO,ID_RUTA,TIPO,ID_MUELLE,ORIGEN " +
+				"FROM BARCO JOIN LLEGAN ON BARCO.ID = LLEGAN.ID_BARCO " +
+				"UNION SELECT DISTINCT ID, NOMBRE,FECHA_SALIDA,HORA_SALIDA,ESTADO,ID_RUTA,TIPO,ID_MUELLE,DESTINO " + 
+				"FROM BARCO JOIN SALEN ON BARCO.ID = SALEN.ID_BARCO) L ON L.ID = C.ID_BARCO ";
+		sql += "WHERE FECHA_LLEGADA  BETWEEN '"+ fecha1 + "' AND '"+ fecha2 + "' " + "AND NOMBRE NOT LIKE '" 
+				+ nombreBarco + "' AND TIPO NOT LIKE '" + tipoBarco + "' AND C.TIPO_CARGA NOT LIKE '" + tipoCarga + "';";
+		System.out.println("SQL stmt:" + sql);
+		
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		while (rs.next()) 
+		{	
+			String	barco = (rs.getString("BARCO"));
+			Date fecha = (rs.getDate("FECHA"));
+			String	hora = rs.getString("HORA");
+			String	estado = (rs.getString("ESTADO"));
+			String	ruta = rs.getString("ID_RUTA");
+			String tipoDeBarco = rs.getString("TIPO_BARCO");
+			String idMuelle = rs.getString("ID_MUELLE");
+			String puerto = rs.getString("PUERTO");
+			String carga = rs.getString("TIPO_CARGA");
+			asb.add(new VistaArriboSalida(barco, fecha, hora, estado, ruta, tipoDeBarco, idMuelle, puerto, carga));
+		}
+		return asb;
+	}
 }

@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import vos.Carga;
-import vos.Exportador;
 
 public class DAOCarga 
 {
@@ -57,10 +56,6 @@ public class DAOCarga
 		{
 			throw new Exception("Carga no valida");
 		}
-
-
-
-
 	}
 
 	public Carga buscarCarga (String id) throws SQLException, Exception 

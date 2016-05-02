@@ -4,14 +4,12 @@ package tm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.Properties;
-
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
 
 import dao.DAOCarga;
 import dao.DAOTablaAreas;
@@ -19,6 +17,7 @@ import dao.DAOTablaBarcos;
 import dao.DAOTablaExportadores;
 import dao.DAOTablaImportadores;
 import vos.ListaAreas;
+import vos.ListaArribosSalidas;
 import vos.Area;
 import vos.Barco;
 import vos.Bodega;
@@ -26,12 +25,14 @@ import vos.Carga;
 import vos.Cobertizo;
 import vos.Exportador;
 import vos.Importador;
-import vos.ListaBuques;
 import vos.ListaCargas;
 import vos.ListaExportadores;
 import vos.ListaImportadores;
+import vos.Llegan;
 import vos.Patio;
+import vos.Salen;
 import vos.Silo;
+import vos.VistaArriboSalida;
 
 /**
  * Fachada en patron singleton de la aplicación
@@ -130,17 +131,16 @@ public class PuertoAndesMaster {
 		}
 		return new ListaImportadores(importadores);
 	}
-
-
-	public Barco AsignarSalida(String name) throws Exception 
+	
+	public void addBarco(Barco barco)throws Exception
 	{
 		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
-		Barco barco;
 		try 
 		{
 			this.conn = darConexion();
 			daoBarcos.setConn(conn);
-			barco=daoBarcos.registrarBuquesLLegan(name);
+			daoBarcos.registrarBarco(barco);
+			conn.commit();
 
 		} 
 		catch (SQLException e) 
@@ -154,7 +154,7 @@ public class PuertoAndesMaster {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
 			throw e;
-		}
+		} 
 		finally 
 		{
 			try 
@@ -170,9 +170,88 @@ public class PuertoAndesMaster {
 				throw exception;
 			}
 		}
-		return barco;
 	}
+	
+	public void addLlegada(Llegan llegan)throws Exception
+	{
+		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
+		try 
+		{
+			this.conn = darConexion();
+			daoBarcos.setConn(conn);
+			daoBarcos.registrarBuquesLlegan(llegan);
+			conn.commit();
 
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoBarcos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}	
+	
+	public void addSalida(Salen salen)throws Exception
+	{
+		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
+		try 
+		{
+			this.conn = darConexion();
+			daoBarcos.setConn(conn);
+			daoBarcos.registrarBuquesSalen(salen);
+			conn.commit();
+
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoBarcos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
 	public void addImportador(Importador importador) throws Exception {
 		DAOTablaImportadores daoImportadores = new DAOTablaImportadores();
 		try 
@@ -455,7 +534,7 @@ public class PuertoAndesMaster {
 		}
 
 	}
-
+	
 	public void addCarga(Carga carga) throws Exception 
 	{
 		DAOCarga daoCarga = new DAOCarga();
@@ -1060,6 +1139,88 @@ public class PuertoAndesMaster {
 		return new ListaAreas(areas);
 		
 	}
+	
+	public ListaArribosSalidas consultarLLegadasSalidas1(Date fecha1, Date fecha2, String nombreBarco, String tipoBarco, String tipoCarga) throws Exception
+	{
+		ArrayList<VistaArriboSalida> asb = null;
+		
+		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
+		try 
+		{
+			this.conn = darConexion();
+			daoBarcos.setConn(conn);
+			asb = daoBarcos.consultarArriboSalida1(fecha1, fecha2, nombreBarco, tipoBarco, tipoCarga);
 
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoBarcos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return new ListaArribosSalidas(asb);
+	}
+	
+	public ListaArribosSalidas consultarLLegadasSalidas2(Date fecha1, Date fecha2, String nombreBarco, String tipoBarco, String tipoCarga) throws Exception
+	{
+		ArrayList<VistaArriboSalida> asb = null;
+		
+		DAOTablaBarcos daoBarcos = new DAOTablaBarcos();
+		try 
+		{
+			this.conn = darConexion();
+			daoBarcos.setConn(conn);
+			asb = daoBarcos.consultarArriboSalida2(fecha1, fecha2, nombreBarco, tipoBarco, tipoCarga);
 
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoBarcos.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return new ListaArribosSalidas(asb);
+	}
 }

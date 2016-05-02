@@ -16,40 +16,43 @@ public class Barco {
 	@JsonProperty(value="registroCapitania")
 	private String registroCapitania;
 	
-	@JsonProperty(value="id_puerto")
-	private String id_puerto;
-	
 	@JsonProperty(value="id_ruta")
 	private String id_ruta;
-	
-	@JsonProperty(value="id_muelle")
-	private String id_muelle;
 	
 	@JsonProperty(value="estado")
 	private String estado;
 	
 	@JsonProperty(value="capacidad")
 	private String capacidad;
+	
+	@JsonProperty(value="tipo")
+	private String tipo;
 
 	public Barco(@JsonProperty(value="id")String id,
 			@JsonProperty(value="nombre")String nombre,
 			@JsonProperty(value="nombreAgente")String nombreAgente,
 			@JsonProperty(value="registroCapitania")String registroCapitania,
-			@JsonProperty(value="id_puerto")String id_puerto,
 			@JsonProperty(value="id_ruta")String id_ruta,
-			@JsonProperty(value="id_muelle")String id_muelle,
 			@JsonProperty(value="estado")String estado,
-			@JsonProperty(value="capacidad")String capacidad) {
+			@JsonProperty(value="capacidad")String capacidad,
+			@JsonProperty(value="tipo")String tipo) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.nombreAgente = nombreAgente;
 		this.registroCapitania = registroCapitania;
-		this.id_puerto = id_puerto;
 		this.id_ruta = id_ruta;
-		this.id_muelle = id_muelle;
 		this.estado=estado;
 		this.capacidad=capacidad;
+		this.tipo=tipo;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getEstado() {
@@ -100,14 +103,6 @@ public class Barco {
 		this.registroCapitania = registroCapitania;
 	}
 
-	public String getId_puerto() {
-		return id_puerto;
-	}
-
-	public void setId_puerto(String id_puerto) {
-		this.id_puerto = id_puerto;
-	}
-
 	public String getId_ruta() {
 		return id_ruta;
 	}
@@ -115,15 +110,4 @@ public class Barco {
 	public void setId_ruta(String id_ruta) {
 		this.id_ruta = id_ruta;
 	}
-
-	public String getId_muelle() {
-		return id_muelle;
-	}
-
-	public void setId_muelle(String id_muelle) {
-		this.id_muelle = id_muelle;
-	}
-	
-	
-
 }
