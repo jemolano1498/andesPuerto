@@ -385,6 +385,32 @@ public class DAOTablaAreas {
 		}
 		return areas;
 	}
+	
+	public ArrayList<Area> consultarCargasAreas(String idArea1, String idArea2) throws SQLException {
+		ArrayList<Area> areas = new ArrayList<Area>();
+		String sql = "SELECT * FROM LLEGA_CARGA WHERE WHERE ID_CARGA IN (SELECT CARGA.ID FROM CARGA WHERE (CARGA.ID_AREA= '"+idArea1+"' OR CARGA.ID_AREA= '"+idArea2+"'))";
+		sql+=" UNION SELECT * FROM SALE_CARGA "; 
+		sql+=" WHERE ID_CARGA IN (SELECT CARGA.ID FROM CARGA WHERE (CARGA.ID_AREA= '"+idArea1+"' OR CARGA.ID_AREA= '"+idArea2+"')) "; 
+		
+		
+		
+		System.out.println("SQL stmt:" + sql);
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+
+		while (rs.next()) 
+		{
+			String id=rs.getString("ID");
+			String nombre=rs.getString("NOMBRE");
+			String idPuerto=rs.getString("ID_PUERTO");
+			String capacidad=rs.getString("CAPACIDAD");
+			String estado2=rs.getString("ESTADO");
+			String tipo2 = rs.getString("TIPO");
+			areas.add(new Area(id, nombre, idPuerto, capacidad, estado2, tipo2));
+		}
+		return areas;
+	}
 
 	
 

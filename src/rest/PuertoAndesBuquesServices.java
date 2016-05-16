@@ -148,7 +148,7 @@ public class PuertoAndesBuquesServices {
 	@Path("/consultarArriboSalida1")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response consultarArriboSalida1(@DefaultValue("") @QueryParam("fecha") Date fecha1, 
-			@DefaultValue("") @QueryParam("fecha") Date fecha2, 
+			@DefaultValue("") @QueryParam("fecha2") Date fecha2, 
 			@DefaultValue("") @QueryParam("nombreBarco") String nombreBarco, 
 			@DefaultValue("") @QueryParam("tipoBarco") String tipoBarco, 
 			@DefaultValue("") @QueryParam("tipoCarga") String tipoCarga) 

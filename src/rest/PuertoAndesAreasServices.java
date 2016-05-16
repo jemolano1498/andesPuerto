@@ -149,5 +149,21 @@ public class PuertoAndesAreasServices {
 		}
 		return Response.status(200).entity(a).build();
 	}
+	@GET
+	@Path("/consultar2Areas")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response consultar2Areas(@DefaultValue("") @QueryParam("idArea1") String idArea1,
+			@DefaultValue("") @QueryParam("idArea2") String idArea2) {
+		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
+		ListaAreas a =null;
+		try {
+			
+				a=tm.darInfoCargasArea(idArea1,idArea2);
+			
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
+	}
 
 }

@@ -109,7 +109,8 @@ public class PuertoAndesCargasServices {
 			@DefaultValue("") @QueryParam("fecha") String fecha,
 			@DefaultValue("") @QueryParam("carga") String idCarga,
 			@DefaultValue("") @QueryParam("destino") String destino,
-			@DefaultValue("") @QueryParam("tipo") String tipo) {
+			@DefaultValue("") @QueryParam("tipo") String tipo,
+			@DefaultValue("") @QueryParam("costo") String costo) {
 		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
 		ListaCargas a =null;
 		try {
