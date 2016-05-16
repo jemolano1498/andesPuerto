@@ -741,7 +741,7 @@ public class PuertoAndesMaster {
 		{
 			this.conn = darConexion();
 			conn.setAutoCommit(false);
-			conn.setTransactionIsolation(8);
+			conn.setTransactionIsolation(4);
 			daoBarcos.setConn(conn);
 			daoCarga.setConn(conn);
 			daoArea.setConn(conn);
