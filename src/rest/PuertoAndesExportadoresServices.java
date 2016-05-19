@@ -14,11 +14,13 @@ package rest;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,6 +29,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import tm.PuertoAndesMaster;
 import vos.Exportador;
+import vos.ListaAreas;
 import vos.ListaExportadores;
 
 /**
@@ -76,6 +79,25 @@ public class PuertoAndesExportadoresServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(exportadores).build();
+	}
+	@GET
+	@Path("/consultarBonificacion")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response consultarArea(@DefaultValue("") @QueryParam("nombre") String nombreExportador,
+			@DefaultValue("") @QueryParam("exportador") String idExportador) {
+		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
+		ListaAreas a =null;
+		try {
+			if (!idExportador.equals(""))
+			{
+			}
+			else
+			{
+			}
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
 	}
 
 
