@@ -31,6 +31,7 @@ import tm.PuertoAndesMaster;
 import vos.Exportador;
 import vos.ListaAreas;
 import vos.ListaExportadores;
+import vos.factura;
 
 /**
  * Clase que expone servicios REST con ruta base: http://"ip o nombre de host":8080/VideoAndes/rest/Exportadores/...
@@ -80,26 +81,21 @@ public class PuertoAndesExportadoresServices {
 		}
 		return Response.status(200).entity(exportadores).build();
 	}
+	
 	@GET
-	@Path("/consultarBonificacion")
+	@Path("/consultarFactura")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response consultarArea(@DefaultValue("") @QueryParam("nombre") String nombreExportador,
-			@DefaultValue("") @QueryParam("exportador") String idExportador) {
+	public Response consultarFacturaConPuertoAndes(@DefaultValue("") @QueryParam("exportador") String idExportador,
+		@DefaultValue("") @QueryParam("nombre") String nombreExportador) {
 		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		ListaAreas a =null;
+		factura factura = null;
 		try {
-			if (!idExportador.equals(""))
-			{
-			}
-			else
-			{
-			}
+			factura = tm.darExportadoresConPuertoAndes(idExportador, nombreExportador);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(a).build();
+		return Response.status(200).entity(factura).build();
 	}
-
 
 
     /**

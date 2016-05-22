@@ -155,7 +155,7 @@ public class PuertoAndesAreasServices {
 	public Response consultar2Areas(@DefaultValue("") @QueryParam("idArea1") String idArea1,
 			@DefaultValue("") @QueryParam("idArea2") String idArea2) {
 		PuertoAndesMaster tm = new PuertoAndesMaster(getPath());
-		ListaAreas a =null;
+		ListaAreas a = null;
 		try {
 			
 				a=tm.darInfoCargasArea(idArea1,idArea2);

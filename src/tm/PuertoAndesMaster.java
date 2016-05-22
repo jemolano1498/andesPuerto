@@ -33,6 +33,7 @@ import vos.Patio;
 import vos.Salen;
 import vos.Silo;
 import vos.VistaArriboSalida;
+import vos.factura;
 
 /**
  * Fachada en patron singleton de la aplicación
@@ -1266,5 +1267,44 @@ public class PuertoAndesMaster {
 		}
 		return new ListaAreas(areas);
 		
+	}
+	public factura darExportadoresConPuertoAndes(String id, String nombre) throws Exception 
+	{
+		factura factura;
+		DAOTablaExportadores daoExportadores = new DAOTablaExportadores();
+		try 
+		{
+			this.conn = darConexion();
+			daoExportadores.setConn(conn);
+			factura = daoExportadores.darCostoFacturaExportadoresConPuertoAndes(id, nombre);
+		} 
+		catch (SQLException e) 
+		{
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} 
+		finally 
+		{
+			try 
+			{
+				daoExportadores.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} 
+			catch (SQLException exception) 
+			{
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return factura;
 	}
 }
