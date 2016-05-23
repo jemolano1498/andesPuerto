@@ -13,5 +13,8 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="src/queue/jboss-client.jar"/>
+	<classpathentry kind="lib" path="src/queue/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="src/queue/jnp-client.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
