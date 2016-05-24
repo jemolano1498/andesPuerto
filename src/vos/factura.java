@@ -74,6 +74,9 @@ public class factura {
 	public String getCosto() {
 		return costo;
 	}
+	public String getBono() {
+		return costo;
+	}
 
 	public void setCosto(String costo) {
 		this.costo = costo;

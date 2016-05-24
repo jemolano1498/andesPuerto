@@ -1,10 +1,15 @@
 package protocoloQueue;
 
+import java.util.ArrayList;
+
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
 import dao.DAOCarga;
+import dao.DAOTablaExportadores;
 import queue.RemoteQueueInteractor;
+import vos.Carga;
+import vos.factura;
 
 public class QueueProtocolo {
 
@@ -14,6 +19,7 @@ public class QueueProtocolo {
 	RemoteQueueInteractor remoteQInteractor;
 	//el dao donde van ha realizar las consultas o modificaciones
 	DAOCarga daoCarga = new DAOCarga();
+	DAOTablaExportadores daoExportadores = new DAOTablaExportadores();
 	try {
 		remoteQInteractor = new RemoteQueueInteractor();
 		while(true)
@@ -34,26 +40,43 @@ public class QueueProtocolo {
 				switch (rec) {
 				case "RF14":
 					//alguno de nosotros solicita req 14
-					respuesta = "ok";
-					remoteQInteractor.sendTextMessage("respSolicitudRF14-"+respuesta);
+					try{
+						daoCarga.asignarCargaAArea(mensajeNuevo.split("-")[1], mensajeNuevo.split("-")[2]);
+					}
+					catch (Exception e){
+						remoteQInteractor.sendTextMessage("respSolicitudRF14-FAIL");
+					}
+					
+					remoteQInteractor.sendTextMessage("respSolicitudRF14-OK");
 					
 					break;
 				case "RF15":
-					//alguno de nosotros solicita req 15
-					respuesta = "ok";
-					remoteQInteractor.sendTextMessage("respSolicitudRF15-"+respuesta);
+					factura fac = daoExportadores.darCostoFacturaExportadoresConPuertoAndes(mensajeNuevo.split("-")[1], mensajeNuevo.split("-")[2]);
+					if (fac != null)
+					{
+						remoteQInteractor.sendTextMessage("respSolicitudRF15-OK-"+fac.getBono());
+					}
+					remoteQInteractor.sendTextMessage("respSolicitudRF15-FAIL");
 					
 					break;
-				case "respSolicitudRF14":
-					//alguno de nosotros responde req 15
-					respuesta = "ok";
-					remoteQInteractor.sendTextMessage("FinReq"+respuesta);
+				case "RC11":
+					ArrayList<Carga> resp = daoCarga.consultarCargas(mensajeNuevo.split("-")[1], 
+							mensajeNuevo.split("-")[2], 
+							mensajeNuevo.split("-")[3], 
+							mensajeNuevo.split("-")[4], 
+							mensajeNuevo.split("-")[5]);
+					
+					remoteQInteractor.sendTextMessage("RC11Resp"+resp);
 					
 					break;
-				case "respSolicitudRF15":
+				case "RC12":
 					//alguno de nosotros responde req 15
-					respuesta = "ok";
-					remoteQInteractor.sendTextMessage("FinReq"+respuesta);
+					factura fac2 = daoExportadores.darCostoFacturaExportadoresConPuertoAndes(mensajeNuevo.split("-")[1], mensajeNuevo.split("-")[2]);
+					if (fac2 != null)
+					{
+						remoteQInteractor.sendTextMessage("respSolicitudRC12-OK-"+fac2.getCosto());
+					}
+					remoteQInteractor.sendTextMessage("respSolicitudRC12-FAIL");
 					
 					break;
 				default:

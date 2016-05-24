@@ -16,6 +16,8 @@ import dao.DAOTablaAreas;
 import dao.DAOTablaBarcos;
 import dao.DAOTablaExportadores;
 import dao.DAOTablaImportadores;
+import protocoloQueue.QueueProtocolo;
+import queue.RemoteQueueInteractor;
 import vos.ListaAreas;
 import vos.ListaArribosSalidas;
 import vos.Area;
@@ -787,7 +789,13 @@ public class PuertoAndesMaster {
 			}
 			else
 			{
-				throw new Exception ("la carga no cabe");
+				RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
+				remoteQInteractor.sendTextMessage("RF14-"+tamanioCarga);
+				String resp = remoteQInteractor.receiveTextMessage();
+				String rec=resp.split("-")[1];
+				if (rec.equals("OK")){
+					remoteQInteractor.sendTextMessage("RF14-COMMIT");
+				}
 			}
 			aRetornar = daoCarga.buscarCarga(idCarga);
 
@@ -1092,7 +1100,7 @@ public class PuertoAndesMaster {
 		return new ListaCargas(cargas);
 	}
 
-	public ListaAreas darInfoArea(String idImportador, String estado, String idArea, String tipo, int x) throws SQLException {
+	public ListaAreas darInfoArea(String idImportador, String estado, String idArea, String tipo, int x) throws Exception {
 		ArrayList<Area> areas=null;
 		DAOTablaAreas daoAreas = new DAOTablaAreas();
 		try 
@@ -1102,10 +1110,24 @@ public class PuertoAndesMaster {
 			if (x==0)
 			{
 				areas = daoAreas.consultarAreas( idImportador, estado, idArea, tipo);
+				RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
+				remoteQInteractor.sendTextMessage("RC11-"+ idImportador+"-"+ estado+"-"+ idArea+"-"+ tipo);
+				String resp = remoteQInteractor.receiveTextMessage();
+				String rec=resp.split("-")[1];
+				if (rec.equals("OK")){
+					//Deberia recibir un JSOn y agregarlo a la respuesta
+				}
 			}
 			else
 			{
 				areas = daoAreas.consultarAreas( idImportador, estado, idArea, tipo);
+				RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
+				remoteQInteractor.sendTextMessage("RC11-"+ idImportador+"-"+ estado+"-"+ idArea+"-"+ tipo);
+				String resp = remoteQInteractor.receiveTextMessage();
+				String rec=resp.split("-")[1];
+				if (rec.equals("OK")){
+					//Deberia recibir un JSOn y agregarlo a la respuesta
+				}
 			}
 			
 
@@ -1277,6 +1299,14 @@ public class PuertoAndesMaster {
 			this.conn = darConexion();
 			daoExportadores.setConn(conn);
 			factura = daoExportadores.darCostoFacturaExportadoresConPuertoAndes(id, nombre);
+			RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
+			remoteQInteractor.sendTextMessage("RF14-"+id);
+			String resp = remoteQInteractor.receiveTextMessage();
+			String rec=resp.split("-")[1];
+			if (rec.equals("OK")){
+				factura.setCosto(factura.getCosto()+Integer.parseInt(resp.split("-")[2]));
+				remoteQInteractor.sendTextMessage("RF14-COMMIT");
+			}
 		} 
 		catch (SQLException e) 
 		{

@@ -37,8 +37,8 @@ public class RemoteQueueInteractor {
          * messaging system as we have disabled the security on the HornetQ
          * messaging subsystem
          */
-        props.put(Context.SECURITY_PRINCIPAL, "chaparro");
-        props.put(Context.SECURITY_CREDENTIALS, "123");
+        props.put(Context.SECURITY_PRINCIPAL, "Juan");
+        props.put(Context.SECURITY_CREDENTIALS, "juan");
 
         InitialContext ic = new InitialContext(props);
         System.err.println("creo contexto");
@@ -76,10 +76,10 @@ public class RemoteQueueInteractor {
         remoteQueueConnection.close();
     }
 
-    public static void main(String agrs[]) throws NamingException, JMSException {
-    	
-        RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
-        remoteQInteractor.sendTextMessage("Hello World!");
-        System.out.println(remoteQInteractor.receiveTextMessage());
-    }
+//    public static void main(String agrs[]) throws NamingException, JMSException {
+//    	
+//        RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
+//        remoteQInteractor.sendTextMessage("Hello World!");
+//        System.out.println(remoteQInteractor.receiveTextMessage());
+//    }
 }
