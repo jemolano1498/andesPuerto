@@ -11,6 +11,9 @@ import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+
 import dao.DAOCarga;
 import dao.DAOTablaAreas;
 import dao.DAOTablaBarcos;
@@ -56,11 +59,22 @@ public class PuertoAndesMaster {
 	private String driver;
 
 	private Connection conn;
+	
+	private RemoteQueueInteractor remoteQInteractor;
 
 	public PuertoAndesMaster(String contextPathP) 
 	{
 		connectionDataPath = contextPathP + CONNECTION_DATA_FILE_NAME_REMOTE;
 		initConnectionData();
+		try {
+			remoteQInteractor = new RemoteQueueInteractor();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void initConnectionData()
@@ -789,7 +803,6 @@ public class PuertoAndesMaster {
 			}
 			else
 			{
-				RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
 				remoteQInteractor.sendTextMessage("RF14-"+tamanioCarga);
 				String resp = remoteQInteractor.receiveTextMessage();
 				String rec=resp.split("-")[1];
@@ -1110,7 +1123,6 @@ public class PuertoAndesMaster {
 			if (x==0)
 			{
 				areas = daoAreas.consultarAreas( idImportador, estado, idArea, tipo);
-				RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
 				remoteQInteractor.sendTextMessage("RC11-"+ idImportador+"-"+ estado+"-"+ idArea+"-"+ tipo);
 				String resp = remoteQInteractor.receiveTextMessage();
 				String rec=resp.split("-")[1];
@@ -1121,7 +1133,6 @@ public class PuertoAndesMaster {
 			else
 			{
 				areas = daoAreas.consultarAreas( idImportador, estado, idArea, tipo);
-				RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
 				remoteQInteractor.sendTextMessage("RC11-"+ idImportador+"-"+ estado+"-"+ idArea+"-"+ tipo);
 				String resp = remoteQInteractor.receiveTextMessage();
 				String rec=resp.split("-")[1];
@@ -1299,8 +1310,7 @@ public class PuertoAndesMaster {
 			this.conn = darConexion();
 			daoExportadores.setConn(conn);
 			factura = daoExportadores.darCostoFacturaExportadoresConPuertoAndes(id, nombre);
-			RemoteQueueInteractor remoteQInteractor = new RemoteQueueInteractor();
-			remoteQInteractor.sendTextMessage("RF14-"+id);
+			remoteQInteractor.sendTextMessage("RF15-"+id);
 			String resp = remoteQInteractor.receiveTextMessage();
 			String rec=resp.split("-")[1];
 			if (rec.equals("OK")){

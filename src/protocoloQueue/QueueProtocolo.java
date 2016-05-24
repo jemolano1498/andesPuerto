@@ -70,7 +70,6 @@ public class QueueProtocolo {
 					
 					break;
 				case "RC12":
-					//alguno de nosotros responde req 15
 					factura fac2 = daoExportadores.darCostoFacturaExportadoresConPuertoAndes(mensajeNuevo.split("-")[1], mensajeNuevo.split("-")[2]);
 					if (fac2 != null)
 					{
